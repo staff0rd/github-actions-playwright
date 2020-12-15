@@ -1,0 +1,39 @@
+name: End-to-end Tests
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-16.04
+
+    steps:
+      - name: Checkout git repository
+        uses: actions/checkout@v2
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1.301
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install dotnet tools
+        run: dotnet tool restore
+
+      - name: Install C# dependencies
+        run: dotnet restore
+
+      - name: build
+        run: tye build -v Debug
+
+      - name: start container
+        run: docker run -d -p 5000:5000 web:1.0.0
+
+      - name: run end-to-end tests
+        run: dotnet test
+        working-directory: Test
