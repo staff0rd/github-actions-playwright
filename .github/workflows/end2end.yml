@@ -32,7 +32,7 @@ jobs:
         run: dotnet tye build -v Debug
 
       - name: start container
-        run: docker run -d -p 5000:5000 web:1.0.0
+        run: docker run -d -p 5000:80 web:1.0.0
 
       - name: run end-to-end tests
         run: dotnet test
