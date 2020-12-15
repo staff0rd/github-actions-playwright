@@ -25,15 +25,15 @@ jobs:
       - name: Install dotnet tools
         run: dotnet tool restore
 
-      - name: Install C# dependencies
+      - name: Install C# dependencie™s
         run: dotnet restore
 
-      - name: build
+      - name: Build
         run: dotnet tye build -v Debug
 
-      - name: start container
+      - name: Start container
         run: docker run -d -p 5000:80 web:1.0.0
 
-      - name: run end-to-end tests
+      - name: Run end-to-end tests
         run: dotnet test
         working-directory: Test
