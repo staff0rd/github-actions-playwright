@@ -1,5 +1,6 @@
 name: End-to-end Tests
 
+# only triggers on pull requests targeting the main branch
 on:
   pull_request:
     branches: [main]
@@ -9,31 +10,36 @@ jobs:
     runs-on: ubuntu-16.04
 
     steps:
+        # grab our code
       - name: Checkout git repository
         uses: actions/checkout@v2
 
+        # ensure the correct version of .net core is installed
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.301
 
+        # ensure the correct version of node is installed
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
           node-version: 12
 
+        # this step restores tye for us
       - name: Install dotnet tools
         run: dotnet tool restore
+        working-directory: Web
 
-      - name: Install C# dependencie™s
-        run: dotnet restore
-
+        # builds our Web project into a docker container
       - name: Build
-        run: dotnet tye build -v Debug
+        run: dotnet tye build Web -v Debug
 
+        # starting the container we just built
       - name: Start container
         run: docker run -d -p 5000:80 web:1.0.0
 
+        # executes tests against the running container
       - name: Run end-to-end tests
         run: dotnet test
         working-directory: Test
